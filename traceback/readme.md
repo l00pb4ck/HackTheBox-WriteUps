@@ -12,12 +12,14 @@
 5. [Appendix](https://github.com/l00pb4ck/HackTheBox-WriteUps)
 
 ## Executive Summary
-Traceback is a compromised web server.  The attacker left a message on the default page, (Insert Message).  The message indicates that a back door was left on the system.  The attacker had uploaded a webshell and never changed the default credentials.  Using the webshell, I was able to gain a remote shell on the web server as the webadmin user.  The webadmin user was allowed to execute a single command via sudo as the sysadmin user.  Using sudo to execute a lua interpreter, I was able to utilize a privelege escalation LUA script that was left in webadmin's home directory to become the sysadmin user.  This allow me to capture the user level flag.  The message of the day (motd) content files were editable by sysadmin and the motd server ran as root.  To gain root access, I added a remote shell callback to the motd header file.  Once root, I was able to access the root flag.
+Traceback is a compromised web server.  The server contained 4 critical and 1 high findings.  The first 3 critical findings relate to the backdoor left by the attackers which used the default credentials from the backdoor author.  In addition, the backdoor was accessable from the internet and allowed for remote command execution on the server.  The remaining critical finding was due to a non-privileged account that is allowed to modify system files.  These system files allow privilege escalation to the root (privileged) user.  The remaining high finding relates to the service account that runs the web server which is allowed to execute commands with elevated permissions.
+
+It is recommended to remove the backdoor from the webserver and remediate the method of entry that allowed the attacker to compromise the server and place the backdoor.  The execution of commands with elevated privileges should be reserved for non-service accounts and should therefore be corrected.  Finally, all system files should only be modifiable by the root user or a delegated user that has been granted the specific rights to modify only the files needed.
 
 ## Findings Summary 
 ID         | Severity | Short Description
 ---------- | -------- | -------
-HtB-FB-001 | Critical | Backdoor  Webshell Accessable from Internet
+HtB-FB-001 | Critical | Backdoor Webshell Accessable from Internet
 HtB-FB-002 | Critical | Passwords Default Creds
 HtB-FB-003 | Critical | Remote Command Execution
 HtB-FB-004 | Critical | Non-root User Can Modify System Files
@@ -82,7 +84,7 @@ https://github.com/TheBinitGhimire/Web-Shells/blob/master/smevk.php
 
 #### HtB-FB-004 | Critical | Non-root User Can Modify System Files
 *Impact* \
-Non-root users have permission to modify the Message of the Day files.  When a user logs in, the motd process is run by root and executes any commands in the motd files.  This could allow an attacker who has gained access to the proper account to execute commands as root.
+Non-root users have permission to modify the Message of the Day files.  When a user logs in, the motd process is run by root and executes any commands in the motd files.  This could allow an attacker who has gained access to the proper account to execute commands as root. \
 ![User Writable System Files](img/traceback-11-shell-user_writable_files_in_etc.png)
 
 *Access Method* \
@@ -333,6 +335,31 @@ GENERATED WORDS: 4612
 -----------------
 END_TIME: Fri May  8 13:01:09 2020
 DOWNLOADED: 4612 - FOUND: 2
+```
+#### Webshell - SmEvK.php (comments at top of file)
+```
+<?php 
+/*
+
+SmEvK_PaThAn Shell v3 Coded by Kashif Khan .
+https://www.facebook.com/smevkpathan
+smevkpathan@gmail.com
+Edit Shell according to your choice.
+Domain read bypass.
+Enjoy!
+
+*/
+//Make your setting here.
+$deface_url = 'http://pastebin.com/raw.php?i=FHfxsFGT';  //deface url here(pastebin).
+$UserName = "admin";                                      //Your UserName here.
+$auth_pass = "admin";                                  //Your Password.
+//Change Shell Theme here//
+$color = "#8B008B";                                   //Fonts color modify here.
+$Theme = '#8B008B';                                    //Change border-color accoriding to your choice.
+$TabsColor = '#0E5061';                              //Change tabs color here.
+#-------------------------------------------------------------------------------
+
+?>
 ```
 #### Screenshots
 ![Website Message](img/traceback-01-website_message.png)
