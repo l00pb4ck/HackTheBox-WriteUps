@@ -91,7 +91,7 @@ Non-root users have permission to modify the Message of the Day files.  When a u
 The files /etc/update-motd.d/* are assigned the sysadmin group and the user sysadmin is a member of this group.  The permissions on the files allowed the group to write to the files.  By adding a remote shell callback, I was able to obtain a root shell on the machine.
 
 *Description* \
-The default ownership of the /etc/update-motd.d/* files is root:root and the permissions are set to 755.  On the target system, these defaults were changed to root:sysadmin and 775.  This allows the sysadmin user to modify these files with no auditing and allows malicous code to be run as root upon a user logging into the system.  This is seen below as I added a remote shell callback and was able to obtain a root shell on the machine.
+The default ownership of the /etc/update-motd.d/* files is root:root and the permissions are set to 755.  On the target system, these defaults were changed to root:sysadmin and 775.  This allows the sysadmin user to modify these files with no auditing and allows malicous code to be run as root upon a user logging into the system.  This is seen below as I added a remote shell callback and was able to obtain a root shell on the machine. \
 ![Root Level Privesc](img/traceback-14-privesc_to_root-motd-update.png)
 
 *Recommendations* \
